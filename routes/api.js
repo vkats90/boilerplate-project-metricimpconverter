@@ -12,8 +12,7 @@ module.exports = function (app) {
     let initUnit = convertHandler.getUnit(req.query.input);
     let returnNum = convertHandler.convert(initNum,initUnit);
     let returnUnit = convertHandler.getReturnUnit(initUnit);
-    console.log(convertHandler.getString(initNum,initUnit,returnNum,returnUnit));
-    res.send(convertHandler.getString(initNum,initUnit,returnNum,returnUnit))
+    res.json(convertHandler.getString(initNum,initUnit,returnNum,returnUnit))
   })
 
 
