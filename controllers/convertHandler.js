@@ -3,14 +3,15 @@ function ConvertHandler() {
     try {
       let result = input.match(/[^a-z]+/i);
       if (result == null) return 1;
-      return /\/\//.test(result) == true ? "invalid number" : eval(result[0]);
+      return /\/\d*[.]*\d*\//.test(result) == true ? false : eval(result[0]);
     } catch {
-      return "invalid number";
+      return null;
     }
   };
 
   this.getUnit = function (input) {
     let result = input.match(/[a-z]+/i);
+    if (result == null) return "false";
     return result[0];
   };
 
@@ -36,7 +37,7 @@ function ConvertHandler() {
         result = "mi";
         break;
       default:
-        result = "invalid unit";
+        result = false;
         break;
     }
     return result;
@@ -64,7 +65,7 @@ function ConvertHandler() {
         result = "kilometers";
         break;
       default:
-        result = "invalid unit";
+        result = false;
         break;
     }
     return result;
@@ -95,7 +96,7 @@ function ConvertHandler() {
         result = initNum * (1 / miToKm);
         break;
       default:
-        result = "invalid unit";
+        result = false;
         break;
     }
     return Math.round((result + Number.EPSILON) * 100000) / 100000;
@@ -120,10 +121,10 @@ function ConvertHandler() {
       ? (initUnit = "L")
       : (initUnit = initUnit.toLowerCase());
     let returnUnit = this.getReturnUnit(initUnit);
-    if (initNum == "invalid number" && returnUnit == "invalid unit")
+    if (initNum == false && returnUnit == false)
       return "invalid number and unit";
-    else if (initNum == "invalid number") return "invalid number";
-    else if (returnUnit == "invalid unit") return "invalid unit";
+    else if (initNum == false) return "invalid number";
+    else if (returnUnit == false) return "invalid unit";
     let returnNum = this.convert(initNum, initUnit);
     let string = this.getString(initNum, initUnit, returnNum, returnUnit);
     let result = { initNum, initUnit, returnNum, returnUnit, string };
