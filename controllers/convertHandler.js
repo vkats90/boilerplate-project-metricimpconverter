@@ -1,7 +1,12 @@
 function ConvertHandler() {
   this.getNum = function (input) {
-    let result = input.match(/\d+/);
-    return result[0];
+    try {
+      let result = input.match(/[^a-z]+/i);
+      if (result == null) return 1;
+      return /\/\//.test(result) == true ? "invalid number" : eval(result[0]);
+    } catch {
+      return "invalid number";
+    }
   };
 
   this.getUnit = function (input) {
@@ -30,6 +35,9 @@ function ConvertHandler() {
       case "km":
         result = "mi";
         break;
+      default:
+        result = "invalid unit";
+        break;
     }
     return result;
   };
@@ -41,7 +49,7 @@ function ConvertHandler() {
         result = "gallons";
         break;
       case "l":
-        result = "litres";
+        result = "liters";
         break;
       case "lbs":
         result = "pounds";
@@ -54,6 +62,9 @@ function ConvertHandler() {
         break;
       case "km":
         result = "kilometers";
+        break;
+      default:
+        result = "invalid unit";
         break;
     }
     return result;
@@ -83,12 +94,14 @@ function ConvertHandler() {
       case "km":
         result = initNum * (1 / miToKm);
         break;
+      default:
+        result = "invalid unit";
+        break;
     }
-    return result;
+    return Math.round((result + Number.EPSILON) * 100000) / 100000;
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
-    let result;
     let string =
       initNum +
       " " +
@@ -97,7 +110,23 @@ function ConvertHandler() {
       returnNum +
       " " +
       this.spellOutUnit(returnUnit);
-    result = { initNum, initUnit, returnNum, returnUnit, string };
+    return string;
+  };
+
+  this.result = function (input) {
+    let initNum = this.getNum(input);
+    let initUnit = this.getUnit(input);
+    initUnit == "l" || initUnit == "L"
+      ? (initUnit = "L")
+      : (initUnit = initUnit.toLowerCase());
+    let returnUnit = this.getReturnUnit(initUnit);
+    if (initNum == "invalid number" && returnUnit == "invalid unit")
+      return "invalid number and unit";
+    else if (initNum == "invalid number") return "invalid number";
+    else if (returnUnit == "invalid unit") return "invalid unit";
+    let returnNum = this.convert(initNum, initUnit);
+    let string = this.getString(initNum, initUnit, returnNum, returnUnit);
+    let result = { initNum, initUnit, returnNum, returnUnit, string };
     return result;
   };
 }

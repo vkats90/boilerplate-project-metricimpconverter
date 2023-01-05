@@ -7,12 +7,7 @@ module.exports = function (app) {
   let convertHandler = new ConvertHandler();
 
   app.get("/api/convert", (req, res) => {
-    let initNum = convertHandler.getNum(req.query.input);
-    let initUnit = convertHandler.getUnit(req.query.input);
-    let returnNum = convertHandler.convert(initNum, initUnit);
-    let returnUnit = convertHandler.getReturnUnit(initUnit);
-    res.json(
-      convertHandler.getString(initNum, initUnit, returnNum, returnUnit)
-    );
+    console.log(req.query.input);
+    res.json(convertHandler.result(req.query.input));
   });
 };
